@@ -12,7 +12,7 @@ class opcodeTableBuilder
         return obj;
     }   
      public static void main(String[] args) throws IOException {
-        FileWriter fileWriter = new FileWriter("opcodeTable.json"); 
+        FileWriter fileWriter = new FileWriter("availableOpcodes.json"); 
         JSONObject OpcodeTable = new JSONObject();
         String[] AssemblyCode={"CLA","LAC","SAC","ADD","SUB","BRZ","BRN","BRP","INP","DSP","MUL","DIV","STP"};
         String[] Opcodes={"0000","0001","0010","0011","0100","0101","0110","0111","1000","1001","1010","1011","1100"};

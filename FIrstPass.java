@@ -12,12 +12,12 @@ class FirstPass
         else
             return s.substring(0, indexComment);
     }
-    static void removeSymbol() throws IOException
+  /*  static void removeSymbol() throws IOException
     {
         InputStream input = new FileInputStream("SymbolTable.json");
         try
         {
-            JSONObject json = new JSONObject(new JSONTokener(credentialsStream));
+            //JSONObject json = new JSONObject(new JSONTokener(credentialsStream));
 
         }
         catch(IOException | JSONException ex)
@@ -27,7 +27,7 @@ class FirstPass
         
 
     }
-
+*/
     public static void main(String[] args) throws IOException
     {
         File file = new File("input.txt"); 
