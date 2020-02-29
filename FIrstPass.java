@@ -1,6 +1,7 @@
+import org.json.simple.*;
 import java.io.*;
 import java.util.*;
-import org.json.*;
+import org.json.simple.parser.*;
 
 class FirstPass
 {
@@ -12,31 +13,110 @@ class FirstPass
         else
             return s.substring(0, indexComment);
     }
-  /*  static void removeSymbol() throws IOException
+    static JSONObject addSymbol(String address)
     {
-        InputStream input = new FileInputStream("SymbolTable.json");
+        JSONObject obj=new JSONObject();
+        obj.put("address",address);
+        return obj;
+    }
+    static String binconvert(int x)
+    {
+        String s="";
+        while(x>0)
+        {
+            s+=x%2;
+            x=x/2;
+        }
+        int len=0;
+        String ans=""; 
+        while(len<s.length())
+        {
+            ans+=s.charAt(s.length()-1-len);
+            ++len;
+        }
+        System.out.println(ans);
+        return ans;
+
+    }
+    static void removeSymbol(JSONObject SymbolTable,JSONObject availableOpcodes,String opcode, String s,int lc) throws IOException
+    {
+         
+          
+        // typecasting obj to JSONObject 
+        FileWriter fileWriter = new FileWriter("SymbolTable.json");
+        int indexOfColon=s.indexOf(':');
         try
         {
-            //JSONObject json = new JSONObject(new JSONTokener(credentialsStream));
-
+            //int indexOfColon=s.indexOf(':');
+            if(indexOfColon!=-1)
+            {
+                SymbolTable.put(s.substring(0,indexOfColon),addSymbol(binconvert(lc)));
+                int indexOfspace1=s.indexOf(' ');
+                int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
+                Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
+                long noOfOperands= (long)opcodeJSON.get("operands");
+                if(noOfOperands==1)
+                {
+                    //System.out.println("dhajkshdkj");
+                    
+                    SymbolTable.put(s.substring(indexOfspace2+1),addSymbol("NULL"));
+                }
+                else if(noOfOperands==2)
+                {
+                    SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace2),addSymbol("NULL"));
+                    indexOfspace1=s.indexOf(' ',indexOfspace2+1);
+                    SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL"));
+                }
+            }
+            else
+            {
+                int indexOfspace1=s.indexOf(' ');
+                int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
+                Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
+                long noOfOperands= (long)opcodeJSON.get("operands");
+                if(noOfOperands==1)
+                {
+                    SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL"));
+                }
+                else if(noOfOperands==2)
+                {
+                    indexOfspace1=s.indexOf(' ',indexOfspace2+1);
+                    SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace1),addSymbol("NULL"));
+                    SymbolTable.put(s.substring(indexOfspace1),addSymbol("NULL"));
+                }
+                
+            }
+            fileWriter.write(SymbolTable.toString());
+            //input.close();
+            fileWriter.close();
+            System.out.println("normal mode");
         }
-        catch(IOException | JSONException ex)
+        catch(IOException e)
         {
-            //do nothing
+            
+            
+           // input.close();
+            fileWriter.close();
+            //System.out.println("error mode");
         }
         
 
     }
-*/
-    public static void main(String[] args) throws IOException
+
+    public static void main(String[] args) throws IOException,ParseException
     {
         File file = new File("input.txt"); 
         Scanner sc = new Scanner(file);
         int lc=0;
+        JSONObject availableOpcodes= (JSONObject) new JSONParser().parse(new FileReader("availableOpcodes.json"));
+        JSONObject SymbolTable = new JSONObject();
+        JSONObject literalTable =new JSONObject();
         while(sc.hasNextLine()) 
         {
             String s=sc.nextLine();
+            String opcode="";
             s=LineCommentRemoved(s);
+            removeSymbol(SymbolTable,availableOpcodes,opcode,s, lc);
             
             lc++;
         }

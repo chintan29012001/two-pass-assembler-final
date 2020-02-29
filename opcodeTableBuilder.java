@@ -1,5 +1,8 @@
 import java.io.*;
-import org.json.*;
+import org.json.simple.*;
+//import java.io.FileReader; 
+import java.util.Iterator; 
+import java.util.Map;
 
 
 class opcodeTableBuilder
@@ -23,7 +26,13 @@ class opcodeTableBuilder
 
         }
         //System.out.println(OpcodeTable.toString(4));
-        fileWriter.write(OpcodeTable.toString(4));
+        /*System.out.println(OpcodeTable.get("CLA"));
+        Map address = (Map) OpcodeTable.get("CLA"); 
+          
+        System.out.println(address.get("operands")); 
+        */
+         
+        fileWriter.write(OpcodeTable.toString());
         fileWriter.close();
         
     }
