@@ -1,0 +1,54 @@
+{
+    "DSP": {
+        "operands": 1,
+        "opcode": "1001"
+    },
+    "ADD": {
+        "operands": 1,
+        "opcode": "0011"
+    },
+    "SUB": {
+        "operands": 1,
+        "opcode": "0100"
+    },
+    "BRP": {
+        "operands": 1,
+        "opcode": "0111"
+    },
+    "MUL": {
+        "operands": 1,
+        "opcode": "1010"
+    },
+    "INP": {
+        "operands": 1,
+        "opcode": "1000"
+    },
+    "BRZ": {
+        "operands": 1,
+        "opcode": "0101"
+    },
+    "STP": {
+        "operands": 0,
+        "opcode": "1100"
+    },
+    "LAC": {
+        "operands": 1,
+        "opcode": "0001"
+    },
+    "DIV": {
+        "operands": 2,
+        "opcode": "1011"
+    },
+    "SAC": {
+        "operands": 1,
+        "opcode": "0010"
+    },
+    "CLA": {
+        "operands": 0,
+        "opcode": "0000"
+    },
+    "BRN": {
+        "operands": 1,
+        "opcode": "0110"
+    }
+}
