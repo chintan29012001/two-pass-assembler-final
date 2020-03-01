@@ -6,6 +6,14 @@ import org.json.simple.parser.*;
 
 class Sample
 {
+    static String LineCommentRemoved(String s)
+    {
+        int indexComment=s.indexOf("\\");
+        if(indexComment==-1)
+            return s;
+        else
+            return s.substring(0, indexComment);
+    }
     static JSONObject addSymbol(String address)
     {
         JSONObject obj=new JSONObject();
@@ -39,6 +47,8 @@ class Sample
         // typecasting obj to JSONObject 
         FileWriter fileWriter = new FileWriter("SymbolTable.json");
         int indexOfColon=s.indexOf(':');
+        int indexOfQuotation1=s.indexOf("'");
+        int indexOfQuotation2=s.indexOf("'",indexOfQuotation1+1);
         try
         {
             //int indexOfColon=s.indexOf(':');
@@ -49,13 +59,13 @@ class Sample
                 int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
                 Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
                 long noOfOperands= (long)opcodeJSON.get("operands");
-                if(noOfOperands==1)
+                if(noOfOperands==1&&indexOfQuotation1==-1&&indexOfQuotation2==-1)
                 {
                     //System.out.println("dhajkshdkj");
                     
                     SymbolTable.put(s.substring(indexOfspace2+1),addSymbol("NULL"));
                 }
-                else if(noOfOperands==2)
+                else if(noOfOperands==2&&indexOfQuotation1==-1&&indexOfQuotation2==-1)
                 {
                     SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace2),addSymbol("NULL"));
                     indexOfspace1=s.indexOf(' ',indexOfspace2+1);
@@ -68,11 +78,11 @@ class Sample
                 int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
                 Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
                 long noOfOperands= (long)opcodeJSON.get("operands");
-                if(noOfOperands==1)
+                if(noOfOperands==1&&indexOfQuotation1==-1&&indexOfQuotation2==-1)
                 {
                     SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL"));
                 }
-                else if(noOfOperands==2)
+                else if(noOfOperands==2&&indexOfQuotation1==-1&&indexOfQuotation2==-1)
                 {
                     indexOfspace1=s.indexOf(' ',indexOfspace2+1);
                     SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace1),addSymbol("NULL"));
@@ -96,6 +106,17 @@ class Sample
         
 
     }
+    static void updateAddress(JSONObject s,String Symbol,int address) throws IOException
+    {
+        FileWriter fileWriter = new FileWriter("SymbolTable.json");
+        JSONObject abc=(JSONObject)s.get(Symbol);
+        abc.put("address",binconvert(address));
+        s.put(Symbol,abc);
+        fileWriter.write(s.toString());
+        //input.close();
+        fileWriter.close();
+
+    }
     public static void main(String[] args) throws IOException,ParseException {
         String s="flg: CLA";
         JSONObject availableOpcodes= (JSONObject) new JSONParser().parse(new FileReader("availableOpcodes.json"));
@@ -105,9 +126,11 @@ class Sample
         //System.out.println(binconvert(lc));
         removeSymbol(SymbolTable,availableOpcodes,opcode,s, lc);
         opcode="ADD";
-        s="flg2: ADD X";
+        s="flg2: ADD X\\abc";
+        s=LineCommentRemoved(s);
         lc++;
         removeSymbol(SymbolTable,availableOpcodes,opcode,s, lc);
-        
+        lc++;
+        updateAddress(SymbolTable,"X",lc);
     }
 }

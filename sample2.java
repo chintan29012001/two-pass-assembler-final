@@ -1,7 +1,7 @@
 class sample2
 {
     public static void main(String[] args) {
-        String x="x 12 x bc x";
+        String x="x 12 x bc' ' x";
         int i1,i2,i3;
         i1=x.indexOf('x');
         i2=x.indexOf('x',i1+1);

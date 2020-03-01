@@ -45,6 +45,8 @@ class FirstPass
         // typecasting obj to JSONObject 
         FileWriter fileWriter = new FileWriter("SymbolTable.json");
         int indexOfColon=s.indexOf(':');
+        int indexOfQuotation1=s.indexOf("'");
+        int indexOfQuotation2=s.indexOf("'",indexOfQuotation1+1);
         try
         {
             //int indexOfColon=s.indexOf(':');
@@ -55,13 +57,13 @@ class FirstPass
                 int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
                 Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
                 long noOfOperands= (long)opcodeJSON.get("operands");
-                if(noOfOperands==1)
+                if(noOfOperands==1&&indexOfQuotation1==-1&&indexOfQuotation2==-1)
                 {
                     //System.out.println("dhajkshdkj");
                     
                     SymbolTable.put(s.substring(indexOfspace2+1),addSymbol("NULL"));
                 }
-                else if(noOfOperands==2)
+                else if(noOfOperands==2&&indexOfQuotation1==-1&&indexOfQuotation2==-1)
                 {
                     SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace2),addSymbol("NULL"));
                     indexOfspace1=s.indexOf(' ',indexOfspace2+1);
@@ -74,11 +76,11 @@ class FirstPass
                 int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
                 Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
                 long noOfOperands= (long)opcodeJSON.get("operands");
-                if(noOfOperands==1)
+                if(noOfOperands==1&&indexOfQuotation1==-1&&indexOfQuotation2==-1)
                 {
                     SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL"));
                 }
-                else if(noOfOperands==2)
+                else if(noOfOperands==2&&indexOfQuotation1==-1&&indexOfQuotation2==-1)
                 {
                     indexOfspace1=s.indexOf(' ',indexOfspace2+1);
                     SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace1),addSymbol("NULL"));
@@ -89,7 +91,7 @@ class FirstPass
             fileWriter.write(SymbolTable.toString());
             //input.close();
             fileWriter.close();
-            System.out.println("normal mode");
+            //System.out.println("normal mode");
         }
         catch(IOException e)
         {
