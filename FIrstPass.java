@@ -176,10 +176,6 @@ class FirstPass
             String opcode="";
             s=LineCommentRemoved(s);
             removeSymbol(SymbolTable,availableOpcodes,opcode,s, lc);
-            FileWriter writer = new FileWriter("TempFile.txt");
-            writer.write(opcode + " " + (String)operands + " " line);
-            writer.write("\n");
-            writer.close();
             lc++;
         }
         sc.close();        
