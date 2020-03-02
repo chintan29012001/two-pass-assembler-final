@@ -5,7 +5,7 @@ import java.util.*;
 import org.json.simple.parser.*;
 
 class FirstPass
-{
+{ 
     static String LineCommentRemoved(String s)
     {
         int indexComment=s.indexOf("//");
@@ -41,10 +41,8 @@ class FirstPass
     }
     static void removeSymbol(JSONObject SymbolTable,JSONObject availableOpcodes,String opcode, String s,int lc) throws IOException,Exception
     {
-         
-          
         // typecasting obj to JSONObject 
-        FileWriter fileWriter = new FileWriter("SymbolTable.json");
+        FileWriter fileWriter = new FileWriter("SymbolTable.json");       
         int indexOfColon=s.indexOf(':');
         try
         {
@@ -62,6 +60,7 @@ class FirstPass
                 if(noOfOperands==1)
                 {
                     //System.out.println("dhajkshdkj");
+                    JSONObject a=(JSONObject )
                     SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace3),addSymbol("NULL"));
                 }
                 
@@ -137,6 +136,7 @@ class FirstPass
     {
         File file = new File("input.txt"); 
         Scanner sc = new Scanner(file);
+        FileWriter f2=new FileWriter("temp.txt");
         int lc=0;
         JSONObject availableOpcodes= (JSONObject) new JSONParser().parse(new FileReader("availableOpcodes.json"));
         JSONObject SymbolTable = new JSONObject();
@@ -148,8 +148,11 @@ class FirstPass
             s=s.strip();
             String opcode=checkAndreturnOpcode(s,lc);
             removeSymbol(SymbolTable,availableOpcodes,opcode,s, lc);
+            s=removeLabel(s);
+            f2.write(s);
             lc+=12;
         }
+        f2.close();
         sc.close();        
     }
 }
