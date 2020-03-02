@@ -1,0 +1,5 @@
+ADD x
+SUB y
+BRP flg2
+MUl y
+SUB m

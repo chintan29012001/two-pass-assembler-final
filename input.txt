@@ -1,1 +1,5 @@
 ADD x
+flg: SUB y //this is crazy
+BRP flg2
+MUl y
+flg2: SUB m
