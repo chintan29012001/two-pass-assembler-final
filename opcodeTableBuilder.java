@@ -1,4 +1,4 @@
-import java.io.*;
+/*import java.io.*;
 import org.json.simple.*;
 //import java.io.FileReader; 
 import java.util.Iterator; 
@@ -30,10 +30,11 @@ class opcodeTableBuilder
         Map address = (Map) OpcodeTable.get("CLA"); 
           
         System.out.println(address.get("operands")); 
-        */
+        
          
         fileWriter.write(OpcodeTable.toString());
         fileWriter.close();
         
     }
 }
+*/

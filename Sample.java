@@ -122,12 +122,16 @@ class Sample
         JSONObject availableOpcodes= (JSONObject) new JSONParser().parse(new FileReader("availableOpcodes.json"));
         JSONObject SymbolTable = new JSONObject();
         int lc=0;
-        String opcode="SUB";
+        String opcode="abc";
+        JSONObject a=(JSONObject) availableOpcodes.get(opcode);
+        if(a==null)
+            System.out.println("NULL VALUE THERE");
         s="SUB X";
+
         //System.out.println(binconvert(lc));
         removeSymbol(SymbolTable,availableOpcodes,opcode,s, lc);
         opcode="ADD";
-        s="flg2: ADD X\\abc";
+        s="flg2: ADD X \\abc";
         s=LineCommentRemoved(s);
         lc++;
         removeSymbol(SymbolTable,availableOpcodes,opcode,s, lc);

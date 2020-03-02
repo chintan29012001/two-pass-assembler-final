@@ -1,3 +1,4 @@
+
 import org.json.simple.*;
 import java.io.*;
 import java.util.*;
@@ -38,7 +39,7 @@ class FirstPass
         return ans;
 
     }
-    static void removeSymbol(JSONObject SymbolTable,JSONObject availableOpcodes,String opcode, String s,int lc) throws IOException
+    static void removeSymbol(JSONObject SymbolTable,JSONObject availableOpcodes,String opcode, String s,int lc) throws IOException,Exception
     {
          
           
@@ -54,6 +55,8 @@ class FirstPass
                 int indexOfspace1=s.indexOf(' ');
                 int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
                 int indexOfspace3=s.indexOf(' ',indexOfspace2+1);
+                if(indexOfspace3!=-1)
+                    throw new Exception() ;
                 Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
                 long noOfOperands= (long)opcodeJSON.get("operands");
                 if(noOfOperands==1)
@@ -66,25 +69,25 @@ class FirstPass
             else
             {
                 int indexOfspace1=s.indexOf(' ');
-                int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
+                int indexOfspace2=s.indexOf(' ',indexOfspace1+1);
+                if(indexOfspace2!=-1)
+                    throw new Exception() ;    
                 Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
                 long noOfOperands= (long)opcodeJSON.get("operands");
                 if(noOfOperands==1)
                 {
                     SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL"));
                 }
-                
-                
             }
             fileWriter.write(SymbolTable.toString());
             //input.close();
             fileWriter.close();
             //System.out.println("normal mode");
         }
-        catch(IOException e)
+        catch(Exception e)
         {
             
-            
+            System.out.println("EXCESS OPERANDS AT "+ lc);
            // input.close();
             fileWriter.close();
             //System.out.println("error mode");
@@ -92,7 +95,7 @@ class FirstPass
         
 
     }
-        public static String removeLabel(String line)
+    public static String removeLabel(String line)
     {
         int i = line.indexOf(":");
         if(i==-1)
@@ -100,83 +103,52 @@ class FirstPass
         else
             return line.substring(i+2);
     }
-
     public static String extractOpcode(String line)
     {
         return ((removeLabel(line)).substring(0,3));	
     }
 
-    public static int searchOpcode (String code)
+   public static String checkAndreturnOpcode (String code,int lc) throws Exception //reduntat
     {
-        JSONParser temp = new JSONParser();
-
+        String opcode="";
         try
         {
-            FileReader file = new FileReader("availableOpcodes.json");
-            JSONObject json = (JSONObject) temp.parse(file);
-            return ((int)(((JSONObject) json.get(code)).get(operands)));
+            JSONObject temp= (JSONObject) new JSONParser().parse(new FileReader("availableOpcodes.json"));
+            opcode=extractOpcode(code);
+            JSONObject a=(JSONObject) temp.get(opcode);
+            if(a!=null)
+            {
+                return opcode;
+            }
+            else
+            {
+                throw new NullPointerException();
+            }
+            
         }
-        catch (Exception ex) 
+        catch(Exception nulleException)
         {
-            System.out.println("Invalid Opcode");
+            System.out.println("Wrong opcode "+opcode+" at "+lc/12);
         }
+        
+        return "";
     }
-
-    public static boolean checkOperands(String line, String opcode, int operands)
-    {
-        switch(operands)
-        {
-            case 0: if(line.charAt(line.indexOf(opcode) + 3) == "\n")
-                        return true;
-                    else
-                    {
-                        System.out.println("Invalid Operands: More Than Required");
-                        return false;
-                    }
-
-            case 1: if(line.charAt(line.indexOf(opcode) + 3) == "\n")
-                    {
-                        System.out.println("Invalid Operands: Less Than Required");
-                        return false;
-                    }
-                    else if(line.indexOf(",")==-1)
-                        return true;
-                    else
-                    {
-                        System.out.println("Invalid Operands: More Than Required");
-                        return false;
-                    }
-
-            case 2: if(line.indexOf(",")==-1)
-                    {
-                        System.out.println("Invalid Operands: Less Than Required");
-                        return false;
-                    }
-                    else if(line.indexOf(",",line.indexOf(",")+1)==-1)
-                        return true;
-                    else
-                    {
-                        System.out.println("Invalid Operands: More Than Required");
-                        return false;
-                    }
-        }
-    }
-
-    public static void main(String[] args) throws IOException,ParseException
+    public static void main(String[] args) throws IOException,ParseException,Exception
     {
         File file = new File("input.txt"); 
         Scanner sc = new Scanner(file);
         int lc=0;
         JSONObject availableOpcodes= (JSONObject) new JSONParser().parse(new FileReader("availableOpcodes.json"));
         JSONObject SymbolTable = new JSONObject();
-        JSONObject errorTable =new JSONObject();
+        //JSONObject errorTable =new JSONObject();
         while(sc.hasNextLine()) 
         {
             String s=sc.nextLine();
-            String opcode="";
             s=LineCommentRemoved(s);
+            s=s.strip();
+            String opcode=checkAndreturnOpcode(s,lc);
             removeSymbol(SymbolTable,availableOpcodes,opcode,s, lc);
-            lc++;
+            lc+=12;
         }
         sc.close();        
     }
