@@ -49,7 +49,7 @@ public class PassTwo {
 			{
 				int indexOfspace=line.indexOf(' ');
 				opadd = (String) ((JSONObject) json1.get(line.substring(indexOfspace+1))).get("address");
-				System.out.println("oppad "+opadd);
+				//System.out.println("oppad "+opadd);
 			}
 			writer.write(code);
 			writer.write(" ");
@@ -62,6 +62,8 @@ public class PassTwo {
 			System.out.println("opcode "+code + " operand" + opadd);
 			location+=12;
 		}
+		writer.close();
+		in.close();
 		
 	}
 
