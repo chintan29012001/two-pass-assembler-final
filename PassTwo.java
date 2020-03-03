@@ -25,7 +25,7 @@ public class PassTwo {
 
     }
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException,ParseException{
 		// TODO Auto-generated method stub
 		
 		File file = new File("temp.txt");
@@ -43,12 +43,23 @@ public class PassTwo {
 			String opcode = line.substring(0, 3);
 			String address = binconvert(location);
 			String code = (String) ((JSONObject) json2.get(opcode)).get("opcode");
-			int op = (int) ((JSONObject) json2.get(opcode)).get("operands");
+			long op = (long) ((JSONObject) json2.get(opcode)).get("operands");
 			String opadd = "";
-			if(op!=0)
-				opadd = (String) ((JSONObject) json1.get(line.substring(4))).get("address");
-			writer.write(address + " " + code + " " + opadd + "\n");
-			System.out.println(address + " " + code + " " + opadd);
+			if(op==1)
+			{
+				int indexOfspace=line.indexOf(' ');
+				opadd = (String) ((JSONObject) json1.get(line.substring(indexOfspace+1))).get("address");
+				System.out.println("oppad "+opadd);
+			}
+			writer.write(code);
+			writer.write(" ");
+			if(op==1)
+			{
+				writer.write(opadd);
+				writer.write(" ");
+			}
+			writer.write("\n");
+			System.out.println("opcode "+code + " operand" + opadd);
 			location+=12;
 		}
 		
