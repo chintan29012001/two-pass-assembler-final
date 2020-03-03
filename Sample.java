@@ -59,18 +59,13 @@ class Sample
                 int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
                 Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
                 long noOfOperands= (long)opcodeJSON.get("operands");
-                if(noOfOperands==1&&indexOfQuotation1==-1&&indexOfQuotation2==-1)
+                if(noOfOperands==1)
                 {
                     //System.out.println("dhajkshdkj");
                     
                     SymbolTable.put(s.substring(indexOfspace2+1),addSymbol("NULL"));
                 }
-                else if(noOfOperands==2&&indexOfQuotation1==-1&&indexOfQuotation2==-1)
-                {
-                    SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace2),addSymbol("NULL"));
-                    indexOfspace1=s.indexOf(' ',indexOfspace2+1);
-                    SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL"));
-                }
+                
             }
             else
             {

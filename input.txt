@@ -1,5 +1,4 @@
-ADD x
-flg: SUB y //this is crazy
-BRP flg2
-MUl y
-flg2: SUB m
+ADD x //0
+flg: SUB y //this is crazy 12
+BRP flg2 //24
+MUL y //36

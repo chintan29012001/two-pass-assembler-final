@@ -2,6 +2,8 @@
 import org.json.simple.*;
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
+
 import org.json.simple.parser.*;
 
 class FirstPass
@@ -41,14 +43,23 @@ class FirstPass
         obj.put("type",type);
         return obj;
     }
-    static String binconvert(int x)
+    static String binconvert(long x)
     {
         String s="";
-        while(x>0)
+        //System.out.println(x);
+        while(((int)x)>0)
         {
-            s+=x%2;
+            s+=Long.toString(x%2);
             x=x/2;
         }
+        if(s.length()>8)
+        {
+            System.out.println("Addressing not allowed");
+            System.exit(1);
+        }
+        //System.out.println("x: "+x+" s:"+s);
+        for(int i=0;s.length()<8;i++)
+            s+="0";
         int len=0;
         String ans=""; 
         while(len<s.length())
@@ -56,83 +67,55 @@ class FirstPass
             ans+=s.charAt(s.length()-1-len);
             ++len;
         }
-        System.out.println(ans);
+        //System.out.println("ans "+ans);
+        //System.out.println(ans);
         return ans;
+
+    }
+    static String removeLabel(JSONObject SymbolTable,String s,int lc) throws IOException,Exception
+    {
+        FileWriter fileWriter = new FileWriter("SymbolTable.json");       
+        int indexOfColon=s.indexOf(':');
+        if(indexOfColon!=-1)
+        {
+            SymbolTable.put(s.substring(0,indexOfColon),addSymbol(binconvert(lc),"label"));
+            s=removeLabel(s);
+        }
+        fileWriter.close();     
+        return s;
 
     }
     static int removeSymbol(JSONObject SymbolTable,JSONObject availableOpcodes,String opcode, String s,int lc,int countvars) throws IOException,Exception
     {
-        // typecasting obj to JSONObject
-        //System.out.println(s); 
         FileWriter fileWriter = new FileWriter("SymbolTable.json");       
-        int indexOfColon=s.indexOf(':');
         try
         {
-            //int indexOfColon=s.indexOf(':');
-            if(indexOfColon!=-1)
+            int indexOfspace1=s.indexOf(' ');
+            int indexOfspace2=s.indexOf(' ',indexOfspace1+1);
+            //System.out.println("2 "+indexOfspace2);
+            if(indexOfspace2!=-1)
             {
-                SymbolTable.put(s.substring(0,indexOfColon),addSymbol(binconvert(lc),"label"));
-                int indexOfspace1=s.indexOf(' ');
-                int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
-                //System.out.println(s);
-                int indexOfspace3=s.indexOf(' ',indexOfspace2+1);
-                System.out.println(indexOfspace3);
-                if(indexOfspace3!=-1)
-                    throw new Exception() ;
-                Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
-                long noOfOperands= (long)opcodeJSON.get("operands");
-                if(noOfOperands==1)
-                {
-                    //System.out.println("dhajkshdkj");
-                    JSONObject a=(JSONObject)SymbolTable.get(s.substring(indexOfspace2+1,indexOfspace3));
-                    if(a==null)
-                    {
-                        if(!((opcode=="BRZ")|(opcode=="BRN")|(opcode=="BRP")))
-                        {    
-                            SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace3),addSymbol("NULL","variable",countvars));
-                            countvars++;
-                        }
-                        else
-                        {
-                            SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace3),addSymbol("NULL","label"));
-
-                        }
-                    }
-                    
-                }
-
+                //System.out.println("2 "+indexOfspace2);
+                throw new Exception();    
             }
-            else
+            Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
+            long noOfOperands= (long)opcodeJSON.get("operands");
+            JSONObject a=(JSONObject)SymbolTable.get(s.substring(indexOfspace1+1));
+            if(a==null)
             {
-                int indexOfspace1=s.indexOf(' ');
-                int indexOfspace2=s.indexOf(' ',indexOfspace1+1);
-                System.out.println("2 "+indexOfspace2);
-                if(indexOfspace2!=-1)
-                    throw new Exception();    
-                Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
-                long noOfOperands= (long)opcodeJSON.get("operands");
-                if(noOfOperands==1)
+                if(!(opcode.equals("BRP")|opcode.equals("BRN")|opcode.equals("BRZ")))
                 {
-                    JSONObject a=(JSONObject)SymbolTable.get(s.substring(indexOfspace1+1));
-                    if(a==null)
-                    {
-                        if(!((opcode=="BRZ")|(opcode=="BRN")|(opcode=="BRP")))
-                        {
-                            SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL","variable",countvars));
-                            countvars++;    
-                        }
-                        else
-                        {
-                            SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL","label"));
+                    SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL","variable",countvars));
+                    countvars++;    
+                }
+                else
+                {
+                    SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL","label"));
 
-                        }
-                    }
                 }
             }
             fileWriter.write(SymbolTable.toString());
-            //input.close();
             fileWriter.close();
-            //System.out.println("normal mode");
             return countvars;
         }
         catch(Exception e)
@@ -141,12 +124,11 @@ class FirstPass
             System.out.println("EXCESS OPERANDS AT "+ lc);
            // input.close();
             fileWriter.close();
+            System.exit(1);
             //System.out.println("error mode");
         }
-        finally
-        {
-            return countvars;
-        }
+        
+        return countvars;
 
     }
     public static String removeLabel(String line)
@@ -162,12 +144,11 @@ class FirstPass
         return ((removeLabel(line)).substring(0,3));	
     }
 
-   public static String checkAndreturnOpcode (String code,int lc) throws Exception //reduntat
+   public static String checkAndreturnOpcode (JSONObject temp,String code,int lc) throws Exception //reduntat
     {
         String opcode="";
         try
         {
-            JSONObject temp= (JSONObject) new JSONParser().parse(new FileReader("availableOpcodes.json"));
             opcode=extractOpcode(code);
             JSONObject a=(JSONObject) temp.get(opcode);
             if(a!=null)
@@ -182,27 +163,47 @@ class FirstPass
         }
         catch(Exception nulleException)
         {
-            System.out.println("Wrong opcode "+opcode+" at "+lc/12);
+            if(opcode.equals("MUL"))
+                System.out.println("fo");
+            System.out.println("Wrong opcode "+opcode+" at "+(lc/12+1));
+            System.exit(1);
         }
         
         return "";
     }
-    static JSONObject updateSymbolTable(JSONObject s,int lc)
+    static int bintoint(String s)
     {
-        Iterator<Map.Entry> itr1=s.entrySet().iterator();
-        JSONObject a=new JSONObject();
-        while(itr1.hasNext())
+        int a=0;
+        for(int i=0;i<s.length();i++)
         {
-            JSONObject temp=(JSONObject) itr1.next();
-            if(temp.get("type")=="variable")
-            {
-                temp.put("address",binconvert(lc + 12*(int)(temp.get("order"))));
-                lc+=12;
-            }
-
+            a+=Math.pow(2,i)*(s.charAt(s.length()-i-1)-'0');
         }
         return a;
 
+    } 
+    static void updateSymbolTable(JSONObject s,int lc) throws IOException
+    {
+        FileWriter fileWriter = new FileWriter("SymbolTable.json");
+        Map mapSymbol=((Map)s);
+        Iterator<Map.Entry> itr1=mapSymbol.entrySet().iterator();
+        while(itr1.hasNext())
+        {
+            Entry p = itr1.next();
+            JSONObject temp=(JSONObject) s.get(p.getKey());
+            if(temp.get("type").equals("variable"))
+            {
+                temp.put("address",binconvert((lc + 12*(int)(temp.get("order")))));
+                s.put((String)p.getKey(),temp);
+            }
+            else if(temp.get("type").equals("label"))
+            {
+                if(temp.get("address").equals("NULL"))
+                    System.out.println("Label "+p.getKey()+" Not defined found at "+ ((bintoint((String)temp.get("address"))/12)+1));
+            }
+            
+        }
+        fileWriter.write(s.toString());
+        fileWriter.close();
     }
     public static void main(String[] args) throws IOException,ParseException,Exception
     {
@@ -216,18 +217,22 @@ class FirstPass
         //JSONObject errorTable =new JSONObject();
         while(sc.hasNextLine()) 
         {
+            //System.out.println(lc);
             String s=sc.nextLine();
             s=LineCommentRemoved(s);
             s=s.strip();
             //System.out.println("in "+s);
-            String opcode=checkAndreturnOpcode(s,lc);
+            String opcode=checkAndreturnOpcode(availableOpcodes,s,lc);
             //System.out.println(opcode);
+            s=removeLabel(SymbolTable, s, lc);
+            s=s.strip();
             countvars=removeSymbol(SymbolTable,availableOpcodes,opcode,s, lc,countvars);
-            s=removeLabel(s);
             f2.write(s);
             f2.write("\n");
             lc+=12;
-        }  
+       }
+    //    System.out.println(SymbolTable.toString());  
+        updateSymbolTable(SymbolTable, lc);
         f2.close();
         sc.close();        
     }

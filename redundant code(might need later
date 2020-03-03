@@ -1,0 +1,40 @@
+/* int indexOfColon=s.indexOf(':');
+        try
+        {
+            //int indexOfColon=s.indexOf(':');
+            if(indexOfColon!=-1)
+            {
+                SymbolTable.put(s.substring(0,indexOfColon),addSymbol(binconvert(lc),"label"));
+                int indexOfspace1=s.indexOf(' ');
+                int indexOfspace2=s.indexOf(' ',indexOfspace1+1);    
+                //System.out.println(s);
+                int indexOfspace3=s.indexOf(' ',indexOfspace2+1);
+                System.out.println(indexOfspace3);
+                if(indexOfspace3!=-1)
+                    throw new Exception() ;
+                Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
+                long noOfOperands= (long)opcodeJSON.get("operands");
+                if(noOfOperands==1)
+                {
+                    //System.out.println("dhajkshdkj");
+                    JSONObject a=(JSONObject)SymbolTable.get(s.substring(indexOfspace2+1,indexOfspace3));
+                    if(a==null)
+                    {
+                        if(!((opcode=="BRZ")|(opcode=="BRN")|(opcode=="BRP")))
+                        {    
+                            SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace3),addSymbol("NULL","variable",countvars));
+                            countvars++;
+                        }
+                        else
+                        {
+                            SymbolTable.put(s.substring(indexOfspace2+1,indexOfspace3),addSymbol("NULL","label"));
+
+                        }
+                    }
+                    
+                }
+
+            }
+            else
+            {
+                */
