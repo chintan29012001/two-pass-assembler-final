@@ -6,6 +6,17 @@ import org.json.simple.parser.*;
 
 class FirstPass
 { 
+
+    public static boolean checkORG(String line)
+    {
+	    if((line.strip()) == "START")
+		    return true;
+	    else
+	    {
+		    System.out.println("START Statement Missing");
+		    return false;
+	    }
+    }
     static String LineCommentRemoved(String s)
     {
         int indexComment=s.indexOf("//");
