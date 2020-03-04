@@ -1,5 +1,5 @@
 ADD x
 SUB y
-BRP flg2
 MUL y
-ADD y
+DSP m
+BRP flg

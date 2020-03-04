@@ -36,23 +36,16 @@ class sample2
         return ans;
 
     }
-    public static void main(String[] args) throws ParseException{
-    String s="{\"flg\":{\"address\":\"00001100\",\"type\":\"label\"},\"x\":{\"address\":\"NULL\",\"type\":\"variable\",\"order\":0}}";
-    JSONParser parser = new JSONParser();
-    JSONObject xyz = (JSONObject) parser.parse(s);
-    Map json=((Map)xyz);   
-    Iterator<Map.Entry> itr1=json.entrySet().iterator();
-    int lc=12;
-    while(itr1.hasNext())
+    static int bintoint(String s)
     {
-        Entry p = itr1.next();
-        JSONObject temp=(JSONObject) xyz.get(p.getKey());
-        if(temp.get("type").equals("variable"))
-            {
-                temp.put("address",binconvert(lc + 12*(Long)(temp.get("order"))));
-            }
-        xyz.put((String)p.getKey(),temp);
+        int a=0;
+        for(int i=0;i<s.length();i++)
+        {
+            a+=Math.pow(2,i)*(s.charAt(s.length()-i-1)-'0');
+        }
+        return a;
     }
-    System.out.println(json.toString());
+    public static void main(String[] args) throws ParseException{
+    System.out.println(bintoint("111"));
     }
 }

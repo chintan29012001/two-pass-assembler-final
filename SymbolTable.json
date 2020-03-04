@@ -1,1 +1,1 @@
-{"flg":{"address":"00001100","type":"label"},"x":{"address":"00111100","type":"variable","order":0},"y":{"address":"01001000","type":"variable","order":1},"flg2":{"address":"00110000","type":"label"}}
+{"flg":{"address":"00000001","type":"label"},"x":{"address":"00000101","type":"variable","order":0},"y":{"address":"00000110","type":"variable","order":1},"m":{"address":"00000111","type":"variable","order":2}}
