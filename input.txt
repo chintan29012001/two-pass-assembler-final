@@ -1,3 +1,3 @@
-ADD ADD //0
-DSP: SUB y //this is crazy 12
+ADD dsp //0
+SUB y //this is crazy 12
 MUL y //36 

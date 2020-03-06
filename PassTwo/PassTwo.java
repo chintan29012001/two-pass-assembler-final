@@ -60,8 +60,8 @@ public class PassTwo {
 				writer.write(" ");
 			}
 			writer.write("\n");
-			System.out.println("opcode "+code + " operand" + opadd);
-			location+=12;
+			//System.out.println("opcode "+code + " operand" + opadd);
+			location+=1;
 		}
 		writer.close();
 		in.close();
