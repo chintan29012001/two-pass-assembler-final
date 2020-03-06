@@ -112,20 +112,34 @@ public class FirstPass
         FileWriter fileWriter = new FileWriter("SymbolTable.json");       
         try
         {
-            int indexOfspace1=s.indexOf(' ');
-            int indexOfspace2=s.indexOf(' ',indexOfspace1+1);
+            String[] abc=s.split(" ");
             //System.out.println("2 "+indexOfspace2);
-            if(indexOfspace2!=-1)
-            {
-                //System.out.println("2 "+indexOfspace2);
-                throw new Exception();    
-            }
             Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
             long noOfOperands= (long)opcodeJSON.get("operands");
+            if(noOfOperands==1)
+            {
+                if(abc.length<2)
+                {
+                    throw new Exception("LESS OPERANDS SUPPLIED AT"+(lc+1));    
+                }
+                else if(abc.length>2)
+                {
+                    //System.out.println("2 "+indexOfspace2);
+                    throw new Exception("EXCESS OPERANDS AT"+(lc+1));    
+                }
+            }
+            else
+            {
+                if(abc.length>1)
+                {
+                    throw new Exception("MORE OPERANDS SUPPLIED AT"+(lc+1));                    
+                }
+
+            }
             JSONObject a=(JSONObject)SymbolTable.get(s.substring(indexOfspace1+1));
-            JSONObject b=(JSONObject) availableOpcodes.get(s.substring(indexOfspace1+1));
-            System.out.println(a);
-            System.out.println(b);
+            JSONObject b=(JSONObject)availableOpcodes.get(s.substring(indexOfspace1+1));
+            //System.out.println(a);
+            //System.out.println(b);
             if(b==null)
             {
                 if(a==null)
@@ -174,7 +188,7 @@ public class FirstPass
         catch(Exception e)
         {
             
-            System.out.println("EXCESS OPERANDS AT "+ lc);
+            System.out.println("EXCESS OPERANDS AT "+ (lc+1));
            // input.close();
             fileWriter.close();
             System.exit(1);

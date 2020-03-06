@@ -1,5 +1,4 @@
-ADD x //0
-flg: SUB y //this is crazy 12
+ADD //0
+SUB y //this is crazy 12
 MUL y //36
-DSP m
-BRP flg
+DSP flg

@@ -1,5 +1,0 @@
-ADD x
-SUB y
-MUL y
-DSP m
-BRP flg
