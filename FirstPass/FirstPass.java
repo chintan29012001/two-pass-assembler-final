@@ -85,7 +85,7 @@ public class FirstPass
                 SymbolTable.put(s.substring(0,indexOfColon),addSymbol(binconvert(lc),"label"));
             else if(b!=null)
             {
-                System.out.println("Opcode "+s.substring(0,indexOfColon)+" used"+lc);
+                System.out.println("Opcode "+s.substring(0,indexOfColon)+" used at "+(lc+1));
                 System.exit(1);
                 
             }
@@ -120,24 +120,38 @@ public class FirstPass
             {
                 if(abc.length<2)
                 {
-                    throw new Exception("LESS OPERANDS SUPPLIED AT"+(lc+1));    
+                    System.out.println("LESS OPERANDS SUPPLIED AT "+(lc+1));
+                    throw new Exception();    
+                    
+                    
                 }
                 else if(abc.length>2)
                 {
-                    //System.out.println("2 "+indexOfspace2);
-                    throw new Exception("EXCESS OPERANDS AT"+(lc+1));    
+                    System.out.println("EXCESS OPERANDS AT "+(lc+1));
+                    throw new Exception();
+                    
                 }
             }
             else
             {
                 if(abc.length>1)
                 {
-                    throw new Exception("MORE OPERANDS SUPPLIED AT"+(lc+1));                    
+                    System.out.println("MORE OPERANDS SUPPLIED AT "+(lc+1));
+                    throw new Exception("MORE OPERANDS SUPPLIED AT "+(lc+1));                   
+                     
                 }
-
+                else
+                {
+                    return countvars;
+                }
             }
-            JSONObject a=(JSONObject)SymbolTable.get(s.substring(indexOfspace1+1));
-            JSONObject b=(JSONObject)availableOpcodes.get(s.substring(indexOfspace1+1));
+            JSONObject a=null;
+            JSONObject b=null;
+            if(abc.length>1)
+            {
+                a=(JSONObject)SymbolTable.get(abc[1]);
+                b=(JSONObject)availableOpcodes.get(abc[1]);
+            }
             //System.out.println(a);
             //System.out.println(b);
             if(b==null)
@@ -146,12 +160,12 @@ public class FirstPass
                 {
                     if(!(opcode.equals("BRP")|opcode.equals("BRN")|opcode.equals("BRZ")))
                     {
-                        SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL","variable",countvars));
+                        SymbolTable.put(abc[1],addSymbol("NULL","variable",countvars));
                         countvars++;    
                     }
                     else
                     {
-                        SymbolTable.put(s.substring(indexOfspace1+1),addSymbol("NULL","label"));
+                        SymbolTable.put(abc[1],addSymbol("NULL","label"));
 
                     }
                 }
@@ -176,9 +190,9 @@ public class FirstPass
                     
                 }
             }
-            else if(b!=null)
+            else if(b!=null&&abc.length>1)
             {
-                System.out.println("Opcode "+s.substring(indexOfspace1+1)+" used as operand found at lc: "+(lc+1));
+                System.out.println("Opcode "+abc[1]+" used as operand found at lc: "+(lc+1));
                 System.exit(1);
             }
             fileWriter.write(SymbolTable.toString());
@@ -188,9 +202,9 @@ public class FirstPass
         catch(Exception e)
         {
             
-            System.out.println("EXCESS OPERANDS AT "+ (lc+1));
+            
            // input.close();
-            fileWriter.close();
+           fileWriter.close();
             System.exit(1);
             //System.out.println("error mode");
         }
