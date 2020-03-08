@@ -34,6 +34,7 @@ public class PassTwo {
 		FileWriter writer = new FileWriter("FinalCode.txt");
 		JSONObject json1 = (JSONObject) new JSONParser().parse(new FileReader("SymbolTable.json"));
 		JSONObject json2 = (JSONObject) new JSONParser().parse(new FileReader("availableOpcodes.json"));
+		JSONObject json3 = (JSONObject) new JSONParser().parse(new FileReader("LiteralTable.json"));
 		
 		String line;
 		long location = 0;
@@ -50,6 +51,9 @@ public class PassTwo {
 			{
 				int indexOfspace=line.indexOf(' ');
 				opadd = (String) ((JSONObject) json1.get(line.substring(indexOfspace+1))).get("address");
+				if(opadd.equals(" ")|opadd==null)
+					opadd=(String) ((JSONObject) json3.get(line.substring(indexOfspace+1))).get("address");
+
 				//System.out.println("oppad "+opadd);
 			}
 			writer.write(code);
