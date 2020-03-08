@@ -21,7 +21,7 @@ public class PassTwo {
             ans+=s.charAt(s.length()-1-len);
             ++len;
         }
-        System.out.println(ans);
+        //System.out.println(ans);
         return ans;
 
     }
@@ -47,13 +47,15 @@ public class PassTwo {
 			String code = (String) ((JSONObject) json2.get(opcode)).get("opcode");
 			long op = (long) ((JSONObject) json2.get(opcode)).get("operands");
 			String opadd = "";
+			//System.out.println();
 			if(op==1)
 			{
 				int indexOfspace=line.indexOf(' ');
-				opadd = (String) ((JSONObject) json1.get(line.substring(indexOfspace+1))).get("address");
-				if(opadd.equals(" ")|opadd==null)
+				if(Character.isDigit(line.substring(indexOfspace+1).charAt(0)))
 					opadd=(String) ((JSONObject) json3.get(line.substring(indexOfspace+1))).get("address");
-
+				else
+					opadd=(String)((JSONObject) json1.get(line.substring(indexOfspace+1))).get("address");
+				
 				//System.out.println("oppad "+opadd);
 			}
 			writer.write(code);
