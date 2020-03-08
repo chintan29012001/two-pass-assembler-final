@@ -1,1 +1,1 @@
-{"dsp":{"address":"00000011","type":"variable","order":0},"y":{"address":"00000100","type":"variable","order":1}}
+{"flg":{"address":"00000000","type":"label"},"x":{"address":"00000111","type":"variable","order":1},"y":{"address":"00001000","type":"variable","order":2}}

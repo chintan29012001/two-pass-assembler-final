@@ -46,6 +46,6 @@ class sample2
         return a;
     }
     public static void main(String[] args) throws ParseException{
-    System.out.println(bintoint("111"));
+    System.out.println(Integer.valueOf("1Abc"));
     }
 }

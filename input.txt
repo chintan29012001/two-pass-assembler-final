@@ -1,3 +1,6 @@
-ADD dsp //0
-SUB y //this is crazy 12
+flg: ADD 1 //0
+INP x
+INP y
+SUB x //this is crazy 12
 MUL y //36 
+BRP flg

@@ -33,7 +33,7 @@ public class FirstPass
         JSONObject obj=new JSONObject();
         obj.put("address",address);
         obj.put("type",type);
-        if(type=="variable")
+        if(type.equals("variable")|type.equals("constant"))
             obj.put("order",c);
         return obj;
     }
@@ -82,7 +82,7 @@ public class FirstPass
             JSONObject a=(JSONObject) SymbolTable.get(s.substring(0,indexOfColon));
             JSONObject b=(JSONObject) availableOpcodeTable.get(s.substring(0,indexOfColon));
             if(a==null&&b==null)
-                SymbolTable.put(s.substring(0,indexOfColon),addSymbol(binconvert(lc),"label"));
+                SymbolTable.put(s.substring(0,indexOfColon).strip(),addSymbol(binconvert(lc),"label"));
             else if(b!=null)
             {
                 System.out.println("Opcode "+s.substring(0,indexOfColon)+" used at "+(lc+1));
@@ -93,7 +93,7 @@ public class FirstPass
             {
                 if(a.get("address").equals("NULL")&&a.get("type").equals("label"))
                 {
-                    SymbolTable.put(s.substring(0,indexOfColon),addSymbol(binconvert(lc),"label"));
+                    SymbolTable.put(s.substring(0,indexOfColon).strip(),addSymbol(binconvert(lc),"label"));
                 }
                 else
                 {
@@ -158,15 +158,20 @@ public class FirstPass
             {
                 if(a==null)
                 {
-                    if(!(opcode.equals("BRP")|opcode.equals("BRN")|opcode.equals("BRZ")))
+                    if(opcode.equals("INP"))
                     {
                         SymbolTable.put(abc[1],addSymbol("NULL","variable",countvars));
                         countvars++;    
                     }
-                    else
+                    else if((opcode.equals("BRP")|opcode.equals("BRN")|opcode.equals("BRZ")))
                     {
                         SymbolTable.put(abc[1],addSymbol("NULL","label"));
 
+                    }
+                    else
+                    {
+                        System.out.println(abc[1]+ "not declared");
+                        System.exit(1);
                     }
                 }
                 else
@@ -287,6 +292,132 @@ public class FirstPass
         fileWriter.write(s.toString());
         fileWriter.close();
     }
+    static void updateLiteralTable(JSONObject s,int lc) throws IOException
+    {
+        FileWriter fileWriter = new FileWriter("LiteralTable.json");
+        Map mapSymbol=((Map)s);
+        Iterator<Map.Entry> itr1=mapSymbol.entrySet().iterator();
+        while(itr1.hasNext())
+        {
+            Entry p = itr1.next();
+            JSONObject temp=(JSONObject) s.get(p.getKey());
+            if(temp.get("type").equals("constant"))
+            {
+                temp.put("address",binconvert((lc + (int)(temp.get("order")))));
+                s.put((String)p.getKey(),temp);
+            }            
+        }
+        fileWriter.write(s.toString());
+        fileWriter.close();
+    }
+    static int removeConstant(JSONObject LiteralTable,JSONObject availableOpcodes,String opcode, String s,int lc,int countvars) throws Exception
+    {
+        FileWriter fileWriter = new FileWriter("LiteralTable.json");       
+        try
+        {
+            String[] abc=s.split(" ");
+            //System.out.println("2 "+indexOfspace2);
+            Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
+            long noOfOperands= (long)opcodeJSON.get("operands");
+            int x=0;
+            try
+            {
+                x=Integer.valueOf(abc[1]);
+            }
+            catch(Exception NumberFormatException)
+            {
+                System.out.println("Invalid way to declare/use a variable at "+(lc+1));
+                System.exit(1);
+
+            }
+            if(noOfOperands==1)
+            {
+                if(abc.length<2)
+                {
+                    System.out.println("LESS OPERANDS SUPPLIED AT "+(lc+1));
+                    throw new Exception();    
+                    
+                    
+                }
+                else if(abc.length>2)
+                {
+                    System.out.println("EXCESS OPERANDS AT "+(lc+1));
+                    throw new Exception();
+                    
+                }
+            }
+            else
+            {
+                if(abc.length>1)
+                {
+                    System.out.println("MORE OPERANDS SUPPLIED AT "+(lc+1));
+                    throw new Exception("MORE OPERANDS SUPPLIED AT "+(lc+1));                   
+                     
+                }
+                else
+                {
+                    return countvars;
+                }
+            }
+            JSONObject a=null;
+            if(abc.length>1)
+            {
+                a=(JSONObject)LiteralTable.get(abc[1]);
+                //b=(JSONObject)availableOpcodes.get(abc[1]);
+            }
+            //System.out.println(a);
+            //System.out.println(b);
+            if(a==null)
+                {
+                    if(opcode.equals("INP")|opcode.equals("BRP")|opcode.equals("BRN")|opcode.equals("BRZ")|opcode.equals("SAC"))
+                    {
+                        System.out.println("Constants cannot be used with the opcode "+opcode+" at "+(lc+1));
+
+                    }
+                    else
+                    {
+                        if(opcode.equals("DIV"))
+                        {
+                            if(x==0)
+                            {
+                                System.out.println("Division by zero at "+(lc+1));
+                            }
+                        }
+                        
+                        LiteralTable.put(abc[1],addSymbol("NULL","constant",countvars));
+                        countvars++;                         
+                    }
+                }
+            fileWriter.write(LiteralTable.toString());
+            fileWriter.close();
+            return countvars;
+        }
+        catch(Exception e)
+        {
+            
+            
+           // input.close();
+           fileWriter.close();
+            System.exit(1);
+            //System.out.println("error mode");
+        }
+        
+        return countvars;
+
+    }
+
+    static int checkConstantOrVariable(JSONObject LiteralTable,JSONObject SymbolTable,JSONObject availableOpcodes,String opcode, String s,int lc,int countvars) throws Exception
+    {
+        if(Character.isDigit(s.charAt(4)))
+        {
+            return removeConstant(LiteralTable, availableOpcodes, opcode, s, lc, countvars);
+        }
+        else
+        {
+            return removeSymbol(SymbolTable, availableOpcodes, opcode, s, lc, countvars);
+        }
+
+    }
     public static void main(String[] args) throws IOException,ParseException,Exception
     {
         File file = new File("input.txt"); 
@@ -296,7 +427,7 @@ public class FirstPass
         int countvars=0;
         JSONObject availableOpcodes= (JSONObject) new JSONParser().parse(new FileReader("availableOpcodes.json"));
         JSONObject SymbolTable = new JSONObject();
-        //JSONObject errorTable =new JSONObject();
+        JSONObject LiteralTable =new JSONObject();
         while(sc.hasNextLine()) 
         {
             //System.out.println(lc);
@@ -308,13 +439,14 @@ public class FirstPass
             //System.out.println(opcode);
             s=removeLabel(SymbolTable,availableOpcodes,s, lc);
             s=s.strip();
-            countvars=removeSymbol(SymbolTable,availableOpcodes,opcode,s, lc,countvars);
+            countvars=checkConstantOrVariable(LiteralTable,SymbolTable,availableOpcodes,opcode,s, lc,countvars);
             f2.write(s);
             f2.write("\n");
             lc+=1;
        }
     //    System.out.println(SymbolTable.toString());  
         updateSymbolTable(SymbolTable, lc);
+        updateLiteralTable(LiteralTable, lc);
         f2.close();
         sc.close();        
     }

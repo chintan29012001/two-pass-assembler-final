@@ -1,3 +1,6 @@
-ADD dsp
-SUB y
+ADD 1
+INP x
+INP y
+SUB x
 MUL y
+BRP flg
