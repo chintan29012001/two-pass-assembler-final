@@ -323,6 +323,11 @@ public class FirstPass
             try
             {
                 x=Integer.valueOf(abc[1]);
+                if(x>127||x<-128)
+                {
+                    System.out.println("Overflow detected at "+(lc+1));
+                    System.exit(1);
+                }
             }
             catch(Exception NumberFormatException)
             {

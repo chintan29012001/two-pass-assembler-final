@@ -1,4 +1,0 @@
-ADD 256
-INP x
-INP y
-STP
