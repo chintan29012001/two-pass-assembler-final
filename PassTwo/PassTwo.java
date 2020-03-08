@@ -51,7 +51,7 @@ public class PassTwo {
 			if(op==1)
 			{
 				int indexOfspace=line.indexOf(' ');
-				if(Character.isDigit(line.substring(indexOfspace+1).charAt(0)))
+				if(Character.isDigit(line.substring(indexOfspace+1).charAt(0))||line.substring(indexOfspace+1).charAt(0)=='-')
 					opadd=(String) ((JSONObject) json3.get(line.substring(indexOfspace+1))).get("address");
 				else
 					opadd=(String)((JSONObject) json1.get(line.substring(indexOfspace+1))).get("address");

@@ -116,6 +116,7 @@ public class FirstPass
             //System.out.println("2 "+indexOfspace2);
             Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
             long noOfOperands= (long)opcodeJSON.get("operands");
+            //System.out.println(opcode);
             if(noOfOperands==1)
             {
                 if(abc.length<2)
@@ -413,9 +414,11 @@ public class FirstPass
 
     static int checkConstantOrVariable(JSONObject LiteralTable,JSONObject SymbolTable,JSONObject availableOpcodes,String opcode, String s,int lc,int countvars) throws Exception
     {
-        if(s.length()>4)
+        Map opcodeJSON = (Map) availableOpcodes.get(opcode); 
+        long noOfOperands= (long)opcodeJSON.get("operands");
+        if(s.length()>=4)
         {
-            if(Character.isDigit(s.charAt(4)))
+            if(Character.isDigit(s.charAt(4))||s.charAt(4)=='-')
             {
                 return removeConstant(LiteralTable, availableOpcodes, opcode, s, lc, countvars);
             }
@@ -425,7 +428,15 @@ public class FirstPass
             }
         }
         else
+        {
+            if(noOfOperands==1)
+            {
+                System.out.println("LESS OPERANDS SUPPLIED AT "+(lc+1));
+                System.exit(1);
+
+            }
             return countvars;
+        }
 
     }
     public static void main(String[] args) throws IOException,ParseException,Exception
@@ -450,6 +461,7 @@ public class FirstPass
             //System.out.println(opcode);
             s=removeLabel(SymbolTable,availableOpcodes,s, lc);
             s=s.strip();
+            //System.out.println(s);
             countvars=checkConstantOrVariable(LiteralTable,SymbolTable,availableOpcodes,opcode,s, lc,countvars);
             f2.write(s);
             f2.write("\n");

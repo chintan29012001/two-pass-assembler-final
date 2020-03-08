@@ -1,7 +1,8 @@
-flg: ADD 256 //0
+CLA
+flg: ADD 1 //0
 INP x
 INP y
-STP
 SUB x //this is crazy 12
 MUL y //36 
 BRP flg
+STP
