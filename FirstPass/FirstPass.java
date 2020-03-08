@@ -408,14 +408,19 @@ public class FirstPass
 
     static int checkConstantOrVariable(JSONObject LiteralTable,JSONObject SymbolTable,JSONObject availableOpcodes,String opcode, String s,int lc,int countvars) throws Exception
     {
-        if(Character.isDigit(s.charAt(4)))
+        if(s.length()>4)
         {
-            return removeConstant(LiteralTable, availableOpcodes, opcode, s, lc, countvars);
+            if(Character.isDigit(s.charAt(4)))
+            {
+                return removeConstant(LiteralTable, availableOpcodes, opcode, s, lc, countvars);
+            }
+            else
+            {
+                return removeSymbol(SymbolTable, availableOpcodes, opcode, s, lc, countvars);
+            }
         }
         else
-        {
-            return removeSymbol(SymbolTable, availableOpcodes, opcode, s, lc, countvars);
-        }
+            return countvars;
 
     }
     public static void main(String[] args) throws IOException,ParseException,Exception
@@ -428,6 +433,7 @@ public class FirstPass
         JSONObject availableOpcodes= (JSONObject) new JSONParser().parse(new FileReader("availableOpcodes.json"));
         JSONObject SymbolTable = new JSONObject();
         JSONObject LiteralTable =new JSONObject();
+        int flg=0;
         while(sc.hasNextLine()) 
         {
             //System.out.println(lc);
@@ -443,11 +449,21 @@ public class FirstPass
             f2.write(s);
             f2.write("\n");
             lc+=1;
+            if(opcode.equals("STP"))
+            {
+                flg=1;
+                break;
+            }
        }
     //    System.out.println(SymbolTable.toString());  
-        updateSymbolTable(SymbolTable, lc);
-        updateLiteralTable(LiteralTable, lc);
-        f2.close();
-        sc.close();        
+    if(flg==0)
+        {
+            System.out.println("STP not found");
+            System.exit(1);
+        }    
+    updateSymbolTable(SymbolTable, lc);
+    updateLiteralTable(LiteralTable, lc);
+    f2.close();
+    sc.close();        
     }
 }

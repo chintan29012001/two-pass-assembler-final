@@ -1,6 +1,4 @@
-ADD 1
+ADD 256
 INP x
 INP y
-SUB x
-MUL y
-BRP flg
+STP
