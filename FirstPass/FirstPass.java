@@ -387,6 +387,7 @@ public class FirstPass
                             if(x==0)
                             {
                                 System.out.println("Division by zero at "+(lc+1));
+                                System.exit(1);
                             }
                         }
                         
