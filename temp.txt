@@ -1,8 +1,0 @@
-CLA
-ADD 1
-INP x
-INP y
-SUB x
-MUL y
-BRP flg
-STP

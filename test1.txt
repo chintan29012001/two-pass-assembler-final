@@ -1,7 +1,6 @@
-INP K
-INP p
 ADD K                 //hey trying something
-//this is a sample comment
+   //this is a sample comment
+   
    L3: SUB p
 //Code Starts Here
 
@@ -15,10 +14,10 @@ LAC 25
 
 SUB B
 
-ADD 5
+ADD ='5'
 
 BRN L3
-INP A
+
 DSP A
 
 CLA
@@ -32,3 +31,4 @@ T: BRZ L3
 
 L4: CLA
 STP
+

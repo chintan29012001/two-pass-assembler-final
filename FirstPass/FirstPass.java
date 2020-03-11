@@ -250,8 +250,6 @@ public class FirstPass
         }
         catch(Exception nulleException)
         {
-            if(opcode.equals("MUL"))
-                System.out.println("fo");
             System.out.println("Wrong opcode "+opcode+" at "+(lc/12+1));
             System.exit(1);
         }
@@ -457,12 +455,14 @@ public class FirstPass
             String s=sc.nextLine();
             s=LineCommentRemoved(s);
             s=s.strip();
+            if(s.length()<2)
+                continue;
             //System.out.println("in "+s);
             String opcode=checkAndreturnOpcode(availableOpcodes,s,lc);
             //System.out.println(opcode);
             s=removeLabel(SymbolTable,availableOpcodes,s, lc);
             s=s.strip();
-            //System.out.println(s);
+            System.out.println(s);
             countvars=checkConstantOrVariable(LiteralTable,SymbolTable,availableOpcodes,opcode,s, lc,countvars);
             f2.write(s);
             f2.write("\n");
